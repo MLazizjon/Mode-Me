@@ -4,23 +4,17 @@ import Home from "./pages/home/Home"
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import './App.css';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-
-const queryClient = new QueryClient()
+import Header from './components/header/Header';
 
 function App() {
   
   return (
-     <QueryClientProvider client={queryClient}>
-
+    
     <div className="App">
       <ToastContainer />
 
-      <div className="cont-int">
-        <h1>
-          salom
-        </h1>
-      </div>
+      <Header />
+     
 
       
        
@@ -35,7 +29,6 @@ function App() {
    
       
     </div>
-     </QueryClientProvider>
   );
 }
 

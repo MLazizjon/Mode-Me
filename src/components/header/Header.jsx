@@ -1,12 +1,17 @@
 import React from 'react'
 import './header.css'
+// import'./Header.styles'
+import { HeaderContainer } from './Header.styles'
 const Header = () => {
   return (
-    <div className='header'>
+    <HeaderContainer>
+
       <h1>
         header
       </h1>
-    </div>
+
+     
+    </HeaderContainer>
   )
 }
 
