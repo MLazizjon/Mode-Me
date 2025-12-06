@@ -77,6 +77,12 @@ li {
     cursor: pointer;
 }
 
+/* LINK STYLES RESET */
+a {
+    text-decoration: none;
+    
+}   
+
 /* MAX WIDTH */
 .max-width {
     max-width: 1300px;
@@ -102,4 +108,17 @@ li {
 
 .block {
     display: block;
+}
+
+@media (max-width: 1000) {
+    .max-width{
+        padding: 10px;
+    }
+}
+
+@media (max-width: 900) {
+    img{
+        max-width: 100%;
+        
+    }
 }
