@@ -16,10 +16,10 @@ const SideBar = () => {
     { name: "Guruhlar", path: `/${base}/guruh` },
   ];
 
-  const logout = () => {
-    localStorage.removeItem("role"); // agar loginda role saqlansa
-    navigate("/");
-  };
+  // const logout = () => {
+  //   localStorage.removeItem("role"); // agar loginda role saqlansa
+  //   navigate("/");
+  // };
 
   return (
     <SidebarSection>

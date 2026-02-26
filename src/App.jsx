@@ -21,7 +21,7 @@ function App() {
     { id: 2, name: "James Wilson", subject: "Python", status: "Active" },
   ]);
 
-  const [groups, setGroups] = useState([
+  const [groups] = useState([
     { id: 1, name: "React-01" },
     { id: 2, name: "Python-01" },
   ]);
