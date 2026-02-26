@@ -4,7 +4,7 @@ import { SidebarSection, Wrapper } from "./SideBar.styles";
 
 const SideBar = () => {
   const location = useLocation();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   // hozirgi base path (admin yoki direktor)
   const base = location.pathname.split("/")[1];
