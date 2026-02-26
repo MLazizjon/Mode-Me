@@ -7,9 +7,9 @@ import {
   ModalOverlay,
   ModalBox,
   ModalButtons,
-} from "./Header.styles";
+} from "./header.styles";
 
-const AdminHeader = () => {
+const TeacherHeader = () => {
   const [search, setSearch] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -17,7 +17,7 @@ const AdminHeader = () => {
   const navigate = useNavigate();
   const searchRef = useRef(null);
 
-  // Outside click
+  // 🔥 Outside click to close suggestions
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (searchRef.current && !searchRef.current.contains(e.target)) {
@@ -29,19 +29,12 @@ const AdminHeader = () => {
       document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Role olish
-  const role = localStorage.getItem("role") || sessionStorage.getItem("role");
-  let roleText = "";
-  if (role === "admin") roleText = "Admin";
-  else if (role === "direktor") roleText = "Direktor";
-  else if (role === "teacher") roleText = "Teacher";
-
+  // 🔥 Teacher uchun pages
   const pages = [
-    { name: "Dashboard", path: "/admin/" },
-    { name: "Talabalar", path: "/admin/talabalar" },
-    { name: "O‘qituvchilar", path: "/admin/teachers" },
-    { name: "Guruhlar", path: "/admin/guruh" },
-    { name: "Paynets", path: "/admin/paynets/1" },
+    { name: "Guruh 1", path: "/app/" },
+    { name: "Guruh 2", path: "/app/guruh2" },
+    { name: "Guruh 3", path: "/app/guruh3" },
+    { name: "Ish haqi", path: "/app/ishhaqi" },
   ];
 
   const filtered = pages.filter((page) =>
@@ -56,6 +49,7 @@ const AdminHeader = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("role");
+    sessionStorage.removeItem("role");
     sessionStorage.removeItem("isLoggedIn");
     navigate("/");
   };
@@ -63,6 +57,7 @@ const AdminHeader = () => {
   return (
     <HeaderSection>
       <Wrapper>
+        {/* 🔍 SEARCH */}
         <div className="left" ref={searchRef}>
           <input
             type="text"
@@ -74,6 +69,8 @@ const AdminHeader = () => {
             }}
             onFocus={() => search && setShowSuggestions(true)}
           />
+
+          {/* 🔥 Suggestions */}
           {search && showSuggestions && (
             <SuggestionList>
               {filtered.map((item, index) => (
@@ -85,13 +82,15 @@ const AdminHeader = () => {
           )}
         </div>
 
+        {/* 👤 ROLE + LOGOUT */}
         <div className="right">
-          <span className="roleText">{roleText}</span>
+          <span className="roleText">Teacher</span>
           <button className="adminBtn" onClick={() => setShowLogoutModal(true)}>
             Chiqish
           </button>
         </div>
 
+        {/* 🔥 Logout modal */}
         {showLogoutModal && (
           <ModalOverlay>
             <ModalBox>
@@ -108,4 +107,4 @@ const AdminHeader = () => {
   );
 };
 
-export default AdminHeader;
+export default TeacherHeader;

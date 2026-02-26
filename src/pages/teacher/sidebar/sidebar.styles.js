@@ -15,7 +15,7 @@ export const Wrapper = styled.div`
   padding: 20px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+//   justify-content: space-between;
   font-family: "Inter", sans-serif;
   height: 100%;
 
