@@ -2,14 +2,38 @@ import styled from "styled-components";
 
 export const TalabalarSection = styled.section`
   position: fixed;
-  left: 300px;
-  top: 80px;
-  width: calc(100% - 300px);
-  height: calc(100vh - 78px);
+  top: 80px; /* header balandligi */
+  left: ${(props) => props.sidebarWidth || 280}px;
+  width: calc(100% - ${(props) => props.sidebarWidth || 280}px);
+  height: calc(100vh - 80px);
   background: #f8fafc;
   padding: 40px;
+  overflow-x: auto; /* kichik ekranlarda horizontal scroll */
   overflow-y: auto;
   box-sizing: border-box;
+  transition: all 0.3s ease;
+
+  @media (max-width: 1300px) {
+    left: ${(props) => (props.sidebarWidth ? props.sidebarWidth : 240)}px;
+    width: calc(100% - ${(props) => (props.sidebarWidth ? props.sidebarWidth : 240)}px);
+    padding: 35px;
+  }
+
+  @media (max-width: 1024px) {
+    left: ${(props) => (props.sidebarWidth ? props.sidebarWidth : 220)}px;
+    width: calc(100% - ${(props) => (props.sidebarWidth ? props.sidebarWidth : 220)}px);
+    padding: 30px;
+  }
+
+  @media (max-width: 900px) {
+    left: 0;
+    width: 100%;
+    padding: 20px;
+  }
+
+  @media (max-width: 600px) {
+    padding: 15px;
+  }
 `;
 
 export const Wrapper = styled.div`
@@ -19,11 +43,13 @@ export const Wrapper = styled.div`
   flex-direction: column;
   gap: 30px;
 
-  /* TOP */
+  /* TOP BAR */
   .top {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
 
     select {
       padding: 10px 15px;
@@ -33,6 +59,11 @@ export const Wrapper = styled.div`
       font-weight: 500;
       color: #64748b;
       outline: none;
+
+      @media (max-width: 600px) {
+        padding: 8px 12px;
+        font-size: 12px;
+      }
     }
   }
 
@@ -45,39 +76,14 @@ export const Wrapper = styled.div`
     font-weight: 600;
     cursor: pointer;
     transition: 0.3s;
+
     &:hover {
       transform: translateY(-2px);
     }
-  }
 
-  /* CARDS */
-  .cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 20px;
-  }
-
-  .card {
-    background: white;
-    padding: 24px;
-    border-radius: 20px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-
-    h4 {
-      color: #64748b;
+    @media (max-width: 600px) {
+      padding: 8px 16px;
       font-size: 14px;
-      margin-bottom: 10px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    h2 {
-      font-size: 28px;
-      color: #1e293b;
-    }
-
-    .red {
-      color: #ef4444;
     }
   }
 
@@ -87,13 +93,14 @@ export const Wrapper = styled.div`
     border-radius: 20px;
     padding: 10px;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
-    overflow: hidden;
+    overflow-x: auto; /* horizontal scroll kichik ekranlar uchun */
   }
 
   table {
     width: 100%;
     border-collapse: collapse;
     text-align: left;
+    min-width: 700px;
 
     th {
       padding: 18px;
@@ -101,6 +108,11 @@ export const Wrapper = styled.div`
       color: #64748b;
       font-weight: 600;
       font-size: 14px;
+
+      @media (max-width: 600px) {
+        padding: 12px;
+        font-size: 12px;
+      }
     }
 
     td {
@@ -108,15 +120,25 @@ export const Wrapper = styled.div`
       border-bottom: 1px solid #f1f5f9;
       color: #334155;
       font-size: 15px;
+
+      @media (max-width: 600px) {
+        padding: 12px;
+        font-size: 13px;
+      }
     }
   }
 
-  /* BADGE */
+  /* BADGES */
   .badge {
     padding: 6px 12px;
     border-radius: 8px;
     font-size: 12px;
     font-weight: 600;
+
+    @media (max-width: 600px) {
+      padding: 4px 8px;
+      font-size: 11px;
+    }
   }
 
   .greenBadge {
@@ -129,7 +151,7 @@ export const Wrapper = styled.div`
     color: #b91c1c;
   }
 
-  /* ACTION */
+  /* ACTION BUTTONS */
   .action {
     cursor: pointer;
     margin-right: 15px;
@@ -138,6 +160,10 @@ export const Wrapper = styled.div`
 
     &:hover {
       opacity: 0.7;
+    }
+
+    @media (max-width: 600px) {
+      font-size: 16px;
     }
   }
 
@@ -157,6 +183,7 @@ export const Wrapper = styled.div`
     padding: 30px;
     border-radius: 24px;
     width: 400px;
+    max-width: 90%;
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -165,6 +192,10 @@ export const Wrapper = styled.div`
       font-size: 18px;
       text-align: center;
       margin-bottom: 10px;
+
+      @media (max-width: 600px) {
+        font-size: 16px;
+      }
     }
 
     .inputs {
@@ -184,13 +215,17 @@ export const Wrapper = styled.div`
           border-color: #4f46e5;
           outline: none;
         }
+
+        @media (max-width: 600px) {
+          height: 40px;
+          font-size: 13px;
+        }
       }
     }
 
     .modalButtons {
       display: flex;
       gap: 10px;
-      margin-top: 10px;
 
       button {
         flex: 1;
@@ -199,6 +234,11 @@ export const Wrapper = styled.div`
         border: none;
         cursor: pointer;
         font-weight: 600;
+
+        @media (max-width: 600px) {
+          height: 40px;
+          font-size: 13px;
+        }
       }
 
       .cancelBtn {
@@ -212,7 +252,7 @@ export const Wrapper = styled.div`
     }
   }
 
-  /* ✅ PHONE INPUT FULL FIX */
+  /* PHONE INPUT */
   .react-tel-input {
     width: 100% !important;
   }
@@ -224,12 +264,16 @@ export const Wrapper = styled.div`
     border: 1.5px solid #e2e8f0 !important;
     font-size: 14px !important;
     padding-left: 52px !important;
-    transition: 0.2s;
-  }
 
-  .react-tel-input .form-control:focus {
-    border-color: #4f46e5 !important;
-    box-shadow: none !important;
+    &:focus {
+      border-color: #4f46e5 !important;
+      box-shadow: none !important;
+    }
+
+    @media (max-width: 600px) {
+      height: 40px !important;
+      font-size: 13px !important;
+    }
   }
 
   .react-tel-input .flag-dropdown {

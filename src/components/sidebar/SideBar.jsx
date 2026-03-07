@@ -1,48 +1,67 @@
-import React from "react";
-import { NavLink, useLocation,  } from "react-router-dom";
-import { SidebarSection, Wrapper } from "./SideBar.styles";
+import React, { useEffect } from "react";
+import { NavLink } from "react-router-dom";
+import { SidebarSection, Wrapper, ToggleButton, Overlay, MenuItems } from "./SideBar.styles";
+import { FaHome, FaUserGraduate, FaChalkboardTeacher, FaUsers, FaBars } from "react-icons/fa";
 
-const SideBar = () => {
-  const location = useLocation();
-  // const navigate = useNavigate();
-
-  // hozirgi base path (admin yoki direktor)
-  const base = location.pathname.split("/")[1];
+const SideBar = ({ role, showSidebar, setShowSidebar, sidebarWidth, setSidebarWidth }) => {
+  const base = role === "direktor" ? "direktor" : "admin";
 
   const menuItems = [
-    { name: "Dashboard", path: `/${base}` },
-    { name: "Talabalar", path: `/${base}/talabalar` },
-    { name: "O'qituvchilar", path: `/${base}/teachers` },
-    { name: "Guruhlar", path: `/${base}/guruh` },
+    { name: "Dashboard", path: `/${base}`, icon: <FaHome /> },
+    { name: "Talabalar", path: `/${base}/talabalar`, icon: <FaUserGraduate /> },
+    { name: "O'qituvchilar", path: `/${base}/teachers`, icon: <FaChalkboardTeacher /> },
+    { name: "Guruhlar", path: `/${base}/guruh`, icon: <FaUsers /> },
   ];
 
-  // const logout = () => {
-  //   localStorage.removeItem("role"); // agar loginda role saqlansa
-  //   navigate("/");
-  // };
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 900) setShowSidebar(false);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [setShowSidebar]);
+
+  const toggleSidebar = () => {
+    if (sidebarWidth === 300) setSidebarWidth(70);
+    else setSidebarWidth(300);
+  };
 
   return (
-    <SidebarSection>
-      <Wrapper>
-        <div>
-          <h1>IT Center</h1>
+    <>
+      <Overlay show={showSidebar && window.innerWidth <= 900} onClick={() => setShowSidebar(false)} />
+      <SidebarSection width={sidebarWidth} show={showSidebar}>
+        <Wrapper>
+          <MenuItems sidebarWidth={sidebarWidth}>
+            <h1 style={{
+              opacity: sidebarWidth > 70 ? 1 : 0,
+              transform: sidebarWidth > 70 ? "translateX(0)" : "translateX(-50px)",
+              transition: "0.3s"
+            }}>
+              IT Center
+            </h1>
+            <ul>
+              {menuItems.map((item, index) => (
+                <li key={index}>
+                  <NavLink
+                    to={item.path}
+                    end={item.name === "Dashboard"}
+                    className={({ isActive }) => (isActive ? "active" : "")}
+                    onClick={() => window.innerWidth <= 900 && setShowSidebar(false)}
+                  >
+                    <span>{item.icon}</span>
+                    {sidebarWidth > 70 ? item.name : ""}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          </MenuItems>
 
-          <ul>
-            {menuItems.map((item, index) => (
-              <li key={index}>
-                <NavLink
-                  to={item.path}
-                  end={item.name === "Dashboard"} // Dashboard faqat exact match
-                  className={({ isActive }) => (isActive ? "active" : "")}
-                >
-                  <span>{item.name}</span>
-                </NavLink>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </Wrapper>
-    </SidebarSection>
+          <ToggleButton onClick={toggleSidebar}>
+            <FaBars />
+          </ToggleButton>
+        </Wrapper>
+      </SidebarSection>
+    </>
   );
 };
 

@@ -6,13 +6,11 @@ import { FaRegPenToSquare } from "react-icons/fa6";
 import { MdDelete } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
-const Talabalar = ({ students = [], setStudents }) => {
+const Talabalar = ({ students = [], setStudents, sidebarWidth }) => {
   const navigate = useNavigate();
-
   const [showModal, setShowModal] = useState(false);
   const [editStudent, setEditStudent] = useState(null);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
-
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -20,10 +18,8 @@ const Talabalar = ({ students = [], setStudents }) => {
     coursePrice: "",
     paid: "",
   });
-
   const [filter, setFilter] = useState("all");
 
-  /* FORMAT NUMBER */
   const formatNumber = (value) => {
     if (!value) return "";
     const num = value.toString().replace(/\D/g, "");
@@ -36,11 +32,8 @@ const Talabalar = ({ students = [], setStudents }) => {
     setFormData({ ...formData, [name]: clean });
   };
 
-  const handlePhoneChange = (value) => {
-    setFormData({ ...formData, phone: value });
-  };
+  const handlePhoneChange = (value) => setFormData({ ...formData, phone: value });
 
-  /* SAVE */
   const handleSave = () => {
     const paid = Number(formData.paid) || 0;
     const coursePrice = Number(formData.coursePrice) || 0;
@@ -50,9 +43,7 @@ const Talabalar = ({ students = [], setStudents }) => {
 
     if (editStudent) {
       const updated = students.map((s) =>
-        s.id === editStudent.id
-          ? { ...s, ...formData, paid, coursePrice, balance }
-          : s
+        s.id === editStudent.id ? { ...s, ...formData, paid, coursePrice, balance } : s
       );
       setStudents(updated);
     } else {
@@ -77,10 +68,8 @@ const Talabalar = ({ students = [], setStudents }) => {
     setFormData({ name: "", phone: "", group: "", coursePrice: "", paid: "" });
   };
 
-  /* EDIT */
   const handleEdit = (student) => {
     setEditStudent(student);
-
     setFormData({
       name: student.name || "",
       phone: student.phone || "",
@@ -88,48 +77,33 @@ const Talabalar = ({ students = [], setStudents }) => {
       coursePrice: String(student.coursePrice || ""),
       paid: String(student.paid || ""),
     });
-
     setShowModal(true);
   };
 
-  /* DELETE CONFIRM */
-  const handleDelete = (student) => {
-    setDeleteConfirm(student);
-  };
-
+  const handleDelete = (student) => setDeleteConfirm(student);
   const confirmDelete = () => {
-    if (!deleteConfirm) return;
     setStudents(students.filter((s) => s.id !== deleteConfirm.id));
     setDeleteConfirm(null);
   };
-
   const cancelDelete = () => setDeleteConfirm(null);
 
-  /* 🔹 FILTER LOGIC */
   const filteredStudents = students.filter((s) => {
     if (filter === "debtors") return s.balance < 0;
     if (filter === "paid") return s.balance === 0;
-    return true; // all
+    return true;
   });
 
   const formatPhoneView = (phone) => {
     if (!phone) return "";
     const p = phone.replace("998", "");
-    return `+998 ${p.slice(0, 2)} ${p.slice(2, 5)} ${p.slice(5, 7)} ${p.slice(
-      7,
-      9
-    )}`;
+    return `+998 ${p.slice(0, 2)} ${p.slice(2, 5)} ${p.slice(5, 7)} ${p.slice(7, 9)}`;
   };
 
   return (
-    <TalabalarSection>
+    <TalabalarSection sidebarWidth={sidebarWidth}>
       <Wrapper>
-        {/* TOP */}
         <div className="top">
-          <button className="addBtn" onClick={() => setShowModal(true)}>
-            + Add Student
-          </button>
-
+          <button className="addBtn" onClick={() => setShowModal(true)}>+ Add Student</button>
           <select value={filter} onChange={(e) => setFilter(e.target.value)}>
             <option value="all">Barchasi</option>
             <option value="debtors">Qarzdorlar</option>
@@ -137,7 +111,6 @@ const Talabalar = ({ students = [], setStudents }) => {
           </select>
         </div>
 
-        {/* TABLE */}
         <div className="tableWrapper">
           <table>
             <thead>
@@ -150,70 +123,23 @@ const Talabalar = ({ students = [], setStudents }) => {
                 <th>Amallar</th>
               </tr>
             </thead>
-
             <tbody>
               {filteredStudents.map((s) => (
-                <tr
-                  key={s.id}
-                  style={{ cursor: "pointer" }}
-                  onClick={() => navigate(`/admin/talabalar/${s.id}`)}
-                >
+                <tr key={s.id} onClick={() => navigate(`/admin/talabalar/${s.id}`)}>
                   <td>{s.name}</td>
                   <td>{formatPhoneView(s.phone)}</td>
                   <td>{s.group}</td>
-
-                  <td
-                    style={{
-                      color:
-                        s.balance < 0 ? "red" : s.balance > 0 ? "green" : "#111",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {s.balance === 0
-                      ? "To'liq to'langan"
-                      : s.balance < 0
-                      ? `${Math.abs(s.balance).toLocaleString()} qarz`
-                      : `${s.balance.toLocaleString()} qoldiq`}
+                  <td style={{ color: s.balance < 0 ? "red" : s.balance > 0 ? "green" : "#111", fontWeight:"bold" }}>
+                    {s.balance === 0 ? "To'liq to'langan" : s.balance < 0 ? `${Math.abs(s.balance).toLocaleString()} qarz` : `${s.balance.toLocaleString()} qoldiq`}
                   </td>
-
                   <td>
-                    <span
-                      className={
-                        s.balance < 0
-                          ? "badge redBadge"
-                          : s.balance > 0
-                          ? "badge greenBadge"
-                          : "badge"
-                      }
-                    >
-                      {s.balance === 0
-                        ? "Yopilgan"
-                        : s.balance < 0
-                        ? "Qarzdor"
-                        : "Qoldiq"}
+                    <span className={s.balance < 0 ? "badge redBadge" : s.balance > 0 ? "badge greenBadge" : "badge"}>
+                      {s.balance === 0 ? "Yopilgan" : s.balance < 0 ? "Qarzdor" : "Qoldiq"}
                     </span>
                   </td>
-
                   <td>
-                    <span
-                      className="action edit"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleEdit(s);
-                      }}
-                    >
-                      <FaRegPenToSquare />
-                    </span>
-
-                    <span
-                      className="action delete"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDelete(s);
-                      }}
-                    >
-                      <MdDelete />
-                    </span>
+                    <span className="action edit" onClick={(e) => { e.stopPropagation(); handleEdit(s); }}><FaRegPenToSquare/></span>
+                    <span className="action delete" onClick={(e) => { e.stopPropagation(); handleDelete(s); }}><MdDelete/></span>
                   </td>
                 </tr>
               ))}
@@ -221,74 +147,34 @@ const Talabalar = ({ students = [], setStudents }) => {
           </table>
         </div>
 
-        {/* ADD / EDIT MODAL */}
+        {/* MODAL */}
         {showModal && (
           <div className="modalOverlay">
             <div className="modal">
               <h3>{editStudent ? "Tahrirlash" : "Talaba qo'shish"}</h3>
-
               <div className="inputs">
-                <input
-                  name="name"
-                  placeholder="Ism"
-                  value={formData.name}
-                  onChange={handleChange}
-                />
-
-                <PhoneInput
-                  country={"uz"}
-                  value={formData.phone}
-                  onChange={handlePhoneChange}
-                />
-
-                <input
-                  name="group"
-                  placeholder="Guruh"
-                  value={formData.group}
-                  onChange={handleChange}
-                />
-
-                <input
-                  name="coursePrice"
-                  placeholder="Kurs narxi 800,000"
-                  value={formatNumber(formData.coursePrice)}
-                  onChange={handleChange}
-                />
-
-                <input
-                  name="paid"
-                  placeholder="To'lov 300,000"
-                  value={formatNumber(formData.paid)}
-                  onChange={handleChange}
-                />
+                <input name="name" placeholder="Ism" value={formData.name} onChange={handleChange}/>
+                <PhoneInput country={"uz"} value={formData.phone} onChange={handlePhoneChange}/>
+                <input name="group" placeholder="Guruh" value={formData.group} onChange={handleChange}/>
+                <input name="coursePrice" placeholder="Kurs narxi" value={formatNumber(formData.coursePrice)} onChange={handleChange}/>
+                <input name="paid" placeholder="To'lov" value={formatNumber(formData.paid)} onChange={handleChange}/>
               </div>
-
               <div className="modalButtons">
-                <button className="cancelBtn" onClick={closeModal}>
-                  Bekor
-                </button>
-                <button className="saveBtn" onClick={handleSave}>
-                  Saqlash
-                </button>
+                <button className="cancelBtn" onClick={closeModal}>Bekor</button>
+                <button className="saveBtn" onClick={handleSave}>Saqlash</button>
               </div>
             </div>
           </div>
         )}
 
-        {/* DELETE CONFIRM MODAL */}
+        {/* DELETE CONFIRM */}
         {deleteConfirm && (
           <div className="modalOverlay">
             <div className="modal">
-              <h3>
-                Siz rostan ham "{deleteConfirm.name}" ni o‘chirmoqchimisiz?
-              </h3>
+              <h3>Siz rostan ham "{deleteConfirm.name}" ni o‘chirmoqchimisiz?</h3>
               <div className="modalButtons">
-                <button className="cancelBtn" onClick={cancelDelete}>
-                  Bekor
-                </button>
-                <button className="saveBtn" onClick={confirmDelete}>
-                  Ha, o‘chirish
-                </button>
+                <button className="cancelBtn" onClick={cancelDelete}>Bekor</button>
+                <button className="saveBtn" onClick={confirmDelete}>Ha, o‘chirish</button>
               </div>
             </div>
           </div>

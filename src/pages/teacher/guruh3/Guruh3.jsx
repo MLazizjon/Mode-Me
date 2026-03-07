@@ -1,40 +1,55 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { 
   Container, Wrapper, TableWrapper, Table, StatusBtn, 
-  AttendanceCell, InputGroup, NameStatus 
+  AttendanceCell, InputGroup, NameStatus,
+  DeleteBtn, ModalOverlay, ModalContent, ModalActions, ConfirmBtn, CancelBtn 
 } from './guruh3.styles';
 
 const Guruh3 = () => {
   const [nameInput, setNameInput] = useState("");
+  const [phoneInput, setPhoneInput] = useState("");
   const [students, setStudents] = useState(() => {
     const saved = localStorage.getItem("guruh3_data");
     return saved ? JSON.parse(saved) : [];
   });
+  const [modal, setModal] = useState({ show: false, student: null });
 
   useEffect(() => {
     localStorage.setItem("guruh3_data", JSON.stringify(students));
   }, [students]);
 
   const addStudent = () => {
-    if (!nameInput.trim()) {
-      toast.error("Iltimos, maydonni to'ldiring!"); 
-      return;
+    if (!nameInput.trim() || !phoneInput.trim()) { 
+      toast.error("Ism va telefonni kiriting!"); 
+      return; 
     }
-    const newStudent = { id: Date.now(), name: nameInput, isPaid: false, attendance: Array(16).fill(null) };
+    const newStudent = { 
+      id: Date.now().toString(), 
+      name: nameInput, 
+      phone: phoneInput,
+      isPaid: false, 
+      attendance: Array(16).fill(null) 
+    };
     setStudents([...students, newStudent]);
-    setNameInput("");
-    toast.success("Talaba muvaffaqiyatli qo'shildi!");
+    setNameInput(""); 
+    setPhoneInput("");
+    toast.success("Talaba guruh 3 ga qo'shildi!");
+  };
+
+  const deleteStudent = () => {
+    setStudents(students.filter(s => s.id !== modal.student.id));
+    setModal({ show: false, student: null });
+    toast.info("O'chirildi");
   };
 
   const toggleAttendance = (sId, lIdx) => {
     setStudents(students.map(s => {
       if (s.id === sId) {
         const newAtt = [...s.attendance];
-        if (newAtt[lIdx] === null) newAtt[lIdx] = true;
-        else if (newAtt[lIdx] === true) newAtt[lIdx] = false;
-        else newAtt[lIdx] = null;
+        newAtt[lIdx] = newAtt[lIdx] === null ? true : newAtt[lIdx] === true ? false : null;
         return { ...s, attendance: newAtt };
       }
       return s;
@@ -43,50 +58,67 @@ const Guruh3 = () => {
 
   return (
     <Container>
-      <ToastContainer position="top-center" autoClose={2000} />
+      <ToastContainer position="top-center" autoClose={1200} />
+      {modal.show && (
+        <ModalOverlay>
+          <ModalContent>
+            <h3>rostan ham {modal.student?.name}ni o'chirasizmi?</h3>
+            <ModalActions>
+              <ConfirmBtn onClick={deleteStudent}>Ha</ConfirmBtn>
+              <CancelBtn onClick={() => setModal({ show: false, student: null })}>Yo'q</CancelBtn>
+            </ModalActions>
+          </ModalContent>
+        </ModalOverlay>
+      )}
       <Wrapper>
-        <h2>Mart Guruh 1600 (Guruh 3)</h2>
+        <h2>Mart (Guruh 3)</h2>
         <InputGroup>
-          <input value={nameInput} onChange={(e) => setNameInput(e.target.value)} placeholder="Talaba ismini kiriting..." />
+          <input value={nameInput} onChange={(e) => setNameInput(e.target.value)} placeholder="Talaba f.i.sh..." />
+          <input value={phoneInput} onChange={(e) => setPhoneInput(e.target.value)} placeholder="Telefon raqami..." />
           <button onClick={addStudent}>Qo'shish</button>
         </InputGroup>
-
-        {students.length === 0 ? (
-          <div style={{ padding: '100px', textAlign: 'center', color: '#888', fontSize: '20px' }}>
-            <b>Hozircha talabalar yo'q</b>
-          </div>
-        ) : (
-          <TableWrapper>
-            <Table>
-              <thead>
-                <tr>
-                  <th>№</th><th>F.I.SH</th><th>To'lov</th>
-                  {[...Array(16)].map((_, i) => <th key={i}>{i + 1}-dars</th>)}
+        <TableWrapper>
+          <Table>
+            <thead>
+              <tr>
+                <th>№</th><th>F.I.SH</th><th>To'lov</th>
+                {[...Array(16)].map((_, i) => <th key={i}>{i + 1}</th>)}
+                <th>Amal</th>
+              </tr>
+            </thead>
+            <tbody>
+              {students.map((s, idx) => (
+                <tr key={s.id}>
+                  <td>{idx + 1}</td>
+                  <td style={{ textAlign: 'left' }}>
+                    <NameStatus paid={s.isPaid} />
+                    <Link to={`/profil/guruh3_data/${s.id}`} style={{ textDecoration: 'none', color: '#007bff', fontWeight: 'bold' }}>
+                      {s.name}
+                    </Link>
+                  </td>
+                  <td>
+                    <StatusBtn paid={s.isPaid} onClick={() => {
+                      const updated = [...students];
+                      updated[idx].isPaid = !updated[idx].isPaid;
+                      setStudents(updated);
+                    }}>{s.isPaid ? "OK" : "X"}</StatusBtn>
+                  </td>
+                  {s.attendance.map((status, i) => (
+                    <AttendanceCell 
+                       key={i} 
+                       status={status} 
+                       onClick={() => toggleAttendance(s.id, i)}
+                       style={{backgroundColor: status === true ? '#d4edda' : status === false ? '#f8d7da' : 'transparent'}}
+                    >
+                      {status === true ? "✅" : status === false ? "❌" : ""}
+                    </AttendanceCell>
+                  ))}
+                  <td><DeleteBtn onClick={() => setModal({ show: true, student: s })}>🗑️</DeleteBtn></td>
                 </tr>
-              </thead>
-              <tbody>
-                {students.map((s, idx) => (
-                  <tr key={s.id}>
-                    <td>{idx + 1}</td>
-                    <td style={{ textAlign: 'left' }}><NameStatus paid={s.isPaid} /> {s.name}</td>
-                    <td>
-                      <StatusBtn paid={s.isPaid} onClick={() => {
-                        const updated = [...students];
-                        updated[idx].isPaid = !updated[idx].isPaid;
-                        setStudents(updated);
-                      }}>{s.isPaid ? "To'landi" : "To'lanmadi"}</StatusBtn>
-                    </td>
-                    {s.attendance.map((status, i) => (
-                      <AttendanceCell key={i} status={status} onClick={() => toggleAttendance(s.id, i)}>
-                        {status === true ? "✅" : status === false ? "❌" : ""}
-                      </AttendanceCell>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-          </TableWrapper>
-        )}
+              ))}
+            </tbody>
+          </Table>
+        </TableWrapper>
       </Wrapper>
     </Container>
   );

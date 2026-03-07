@@ -9,7 +9,8 @@ import {
   ModalButtons,
 } from "./Header.styles";
 
-const AdminHeader = () => {
+const AdminHeader = ({ showSidebar, setShowSidebar, sidebarWidth }) => {
+
   const [search, setSearch] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -17,31 +18,30 @@ const AdminHeader = () => {
   const navigate = useNavigate();
   const searchRef = useRef(null);
 
-  // Outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (searchRef.current && !searchRef.current.contains(e.target)) {
         setShowSuggestions(false);
       }
     };
+
     document.addEventListener("mousedown", handleClickOutside);
-    return () =>
-      document.removeEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Role olish
   const role = localStorage.getItem("role") || sessionStorage.getItem("role");
-  let roleText = "";
-  if (role === "admin") roleText = "Admin";
-  else if (role === "direktor") roleText = "Direktor";
-  else if (role === "teacher") roleText = "Teacher";
+
+  const roleText =
+    role === "admin" ? "Admin" :
+    role === "direktor" ? "Direktor" :
+    "Teacher";
 
   const pages = [
-    { name: "Dashboard", path: "/admin/" },
-    { name: "Talabalar", path: "/admin/talabalar" },
-    { name: "O‘qituvchilar", path: "/admin/teachers" },
-    { name: "Guruhlar", path: "/admin/guruh" },
-    { name: "Paynets", path: "/admin/paynets/1" },
+    { name: "Dashboard", path: `/${role}` },
+    { name: "Talabalar", path: `/${role}/talabalar` },
+    { name: "O‘qituvchilar", path: `/${role}/teachers` },
+    { name: "Guruhlar", path: `/${role}/guruh` },
+    { name: "Davomat", path: `/${role}/davomat` },
   ];
 
   const filtered = pages.filter((page) =>
@@ -56,14 +56,17 @@ const AdminHeader = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("role");
-    sessionStorage.removeItem("isLoggedIn");
+    sessionStorage.removeItem("role");
     navigate("/");
   };
 
   return (
-    <HeaderSection>
+    <HeaderSection showSidebar={showSidebar} sidebarWidth={sidebarWidth}>
+
       <Wrapper>
+
         <div className="left" ref={searchRef}>
+
           <input
             type="text"
             placeholder="Search pages..."
@@ -72,38 +75,61 @@ const AdminHeader = () => {
               setSearch(e.target.value);
               setShowSuggestions(true);
             }}
-            onFocus={() => search && setShowSuggestions(true)}
           />
+
           {search && showSuggestions && (
             <SuggestionList>
+
               {filtered.map((item, index) => (
                 <li key={index} onMouseDown={() => handleSelect(item.path)}>
                   {item.name}
                 </li>
               ))}
+
             </SuggestionList>
           )}
+
         </div>
 
         <div className="right">
+
           <span className="roleText">{roleText}</span>
-          <button className="adminBtn" onClick={() => setShowLogoutModal(true)}>
+
+          <button
+            className="adminBtn"
+            onClick={() => setShowLogoutModal(true)}
+          >
             Chiqish
           </button>
+
+          <button
+            className="hamburger"
+            onClick={() => setShowSidebar(!showSidebar)}
+          >
+            ☰
+          </button>
+
         </div>
 
-        {showLogoutModal && (
-          <ModalOverlay>
-            <ModalBox>
-              <p>Siz rostdan chiqmoqchimisiz?</p>
-              <ModalButtons>
-                <button onClick={handleLogout}>Ha</button>
-                <button onClick={() => setShowLogoutModal(false)}>Yo‘q</button>
-              </ModalButtons>
-            </ModalBox>
-          </ModalOverlay>
-        )}
       </Wrapper>
+
+      {showLogoutModal && (
+        <ModalOverlay>
+
+          <ModalBox>
+
+            <h3>Chiqishni tasdiqlaysizmi?</h3>
+
+            <ModalButtons>
+              <button onClick={handleLogout}>Ha</button>
+              <button onClick={() => setShowLogoutModal(false)}>Bekor</button>
+            </ModalButtons>
+
+          </ModalBox>
+
+        </ModalOverlay>
+      )}
+
     </HeaderSection>
   );
 };

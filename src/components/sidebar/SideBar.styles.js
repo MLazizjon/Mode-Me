@@ -1,85 +1,124 @@
 import styled from "styled-components";
 
+export const Overlay = styled.div`
+  display: none;
+
+  @media (max-width: 900px) {
+    display: ${(props) => (props.show ? "block" : "none")};
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 998;
+  }
+`;
+
 export const SidebarSection = styled.section`
-  width: 300px;
-  height: 100vh;
-  background: #ffffff;
-  border-right: 1px solid #e5e7eb;
   position: fixed;
-  left: 0;
   top: 0;
-  /* z-index: 100; */
+  left: 0;
+
+  height: 100%;
+  width: ${(props) => props.width}px;
+
+  background: #fff;
+  border-right: 1px solid #e5e7eb;
+
+  z-index: 999;
+
+  transition: width 0.3s ease, transform 0.3s ease;
+
+  overflow: hidden;
+
+  box-sizing: border-box;
+
+  @media (max-width: 900px) {
+    transform: ${(props) =>
+      props.show ? "translateX(0)" : "translateX(-100%)"};
+
+    box-shadow: ${(props) =>
+      props.show ? "2px 0 12px rgba(0,0,0,0.2)" : "none"};
+  }
 `;
 
 export const Wrapper = styled.div`
-  padding: 20px;
+  height: 100%;
+
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  font-family: "Inter", sans-serif;
-  height: 100%;
 
-  h1 {
-    font-size: 22px;
-    font-weight: 700;
-    color: #1f2937;
-    margin-bottom: 30px;
-  }
+  padding: 0px 10px;
+`;
+
+export const MenuItems = styled.div`
+  flex: 1;
 
   ul {
     list-style: none;
     padding: 0;
+    margin: 0;
   }
 
   li {
-    margin-bottom: 6px;
+    margin-bottom: 8px;
   }
 
   a {
+    text-decoration: none;
+    color: #6b7280;
+
+    padding: 10px;
+
     display: flex;
     align-items: center;
-    padding: 12px 14px;
-    font-size: 14px;
-    font-weight: 500;
-    color: #6b7280;
-    text-decoration: none;
-    border-radius: 8px;
-    position: relative;
-    transition: 0.2s ease;
-  }
 
-  a:hover {
+    border-radius: 8px;
+
+    transition: background 0.3s, color 0.3s;
+
+    span {
+      width: 30px;
+      font-size: 18px;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    &:hover {
+      background: #f3f4f6;
+      color: #1e90ff;
+    }
+
+    &.active {
+      background: #eef4ff;
+      color: #1e90ff;
+      font-weight: 600;
+    }
+  }
+`;
+
+export const ToggleButton = styled.div`
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  color: grey;
+
+  border-radius: 8px;
+
+  font-size: 22px;
+
+  padding: 10px;
+
+  margin-top: 20px;
+
+  transition: 0.3s;
+
+  &:hover {
     background: #f3f4f6;
-    color: #1E90FF;
-  }
-
-  a.active {
-    background: #eef4ff;
-    color: #1E90FF;
-  }
-
-  a.active::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 8px;
-    bottom: 8px;
-    width: 4px;
-    background: #1E90FF;
-    border-radius: 4px;
-  }
-
-  .logout {
-    padding: 12px 14px;
-    font-size: 14px;
-    color: #6b7280;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: 0.2s;
-  }
-
-  .logout:hover {
-    background: #fee2e2;
-    color: #b91c1c;
+    color: #1e90ff;
   }
 `;

@@ -10,20 +10,72 @@ import TeacherLogout from "./pages/teacher/teacherlogout/TeacherLogout";
 import PrivateRoute from "./components/Priveroute";
 
 function App() {
+  // ================= STUDENTS =================
   const [students, setStudents] = useState([
-    { id: 1, name: "Alisher Karimov", phone: "+998901234567", group: "React-01", balance: 500000 },
-    { id: 2, name: "Madina Tursunova", phone: "+998912345678", group: "Python-01", balance: -200000 },
-    { id: 3, name: "Jasur Islomov", phone: "+998933344455", group: "React-01", balance: -150000 },
+    {
+      id: 1,
+      name: "Alisher Karimov",
+      phone: "+998901234567",
+      group: "Frontend Bootcamp #12",
+      balance: 500000,
+    },
+    {
+      id: 2,
+      name: "Madina Tursunova",
+      phone: "+998912345678",
+      group: "UI/UX Dizayn #05",
+      balance: -200000,
+    },
+    {
+      id: 3,
+      name: "Jasur Islomov",
+      phone: "+998933344455",
+      group: "React-01",
+      balance: -150000,
+    },
   ]);
 
+  // ================= TEACHERS =================
   const [teachers, setTeachers] = useState([
     { id: 1, name: "Alex Thompson", subject: "JavaScript", status: "Active" },
     { id: 2, name: "James Wilson", subject: "Python", status: "Active" },
   ]);
 
-  const [groups] = useState([
-    { id: 1, name: "React-01" },
-    { id: 2, name: "Python-01" },
+  // ================= GROUPS =================
+  const [groups, setGroups] = useState([
+    {
+      id: 1,
+      name: "Frontend Bootcamp #12",
+      status: "Faol",
+      teacher: "Jasur Akromov",
+      days: "Dush, Chor, Juma",
+      time: "14:00 - 16:00",
+      max: 15,
+      icon: "💻",
+      color: "#E0F2FE",
+    },
+    {
+      id: 2,
+      name: "UI/UX Dizayn #05",
+      status: "Faol",
+      teacher: "Malika Salieva",
+      days: "Sesh, Pay, Shan",
+      time: "10:00 - 12:00",
+      max: 15,
+      icon: "🎨",
+      color: "#FEF3C7",
+    },
+    {
+      id: 3,
+      name: "React-01",
+      status: "Faol",
+      teacher: "Alex Thompson",
+      days: "Dush, Chor",
+      time: "18:00 - 20:00",
+      max: 12,
+      icon: "⚛️",
+      color: "#DCFCE7",
+    },
   ]);
 
   return (
@@ -45,6 +97,7 @@ function App() {
                 teachers={teachers}
                 setTeachers={setTeachers}
                 groups={groups}
+                setGroups={setGroups}
               />
             </PrivateRoute>
           }
@@ -57,8 +110,11 @@ function App() {
             <PrivateRoute allowedRoles={["direktor"]}>
               <DirektorLayout
                 students={students}
+                setStudents={setStudents}
                 teachers={teachers}
+                setTeachers={setTeachers}
                 groups={groups}
+                setGroups={setGroups}
               />
             </PrivateRoute>
           }
@@ -78,7 +134,7 @@ function App() {
           }
         />
 
-        {/* HAR QANDAY NOTO‘G‘RI ROUTE → LOGIN */}
+        {/* NOT FOUND */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>
